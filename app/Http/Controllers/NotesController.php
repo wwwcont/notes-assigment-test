@@ -24,10 +24,20 @@ class NotesController extends Controller
 
     public function create()
     {
+        return view('notes.create');
     }
 
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+            'color' => 'required|regex:/^#[0-9A-F]{6}$/i',
+        ]);
+
+        auth()->user()->notes()->create($validated);
+
+        return redirect(route('notes.index'))->with('success', 'Заметка создана');
     }
 
     public function edit(Note $id)
