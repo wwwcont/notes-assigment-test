@@ -8,8 +8,18 @@ use Illuminate\Http\Request;
 
 class NotesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $q = $request->get('q');
+
+        $notes = auth()->user()->notes()
+            ->when($q, fn($query) => $query->where('title', 'like', "%{$q}%"))
+            ->orderBy('is_pinned', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('notes.index', ['notes' => $notes, 'q' => $q]);
     }
 
     public function create()
