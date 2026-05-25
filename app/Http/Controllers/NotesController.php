@@ -41,18 +41,14 @@ class NotesController extends Controller
 
     public function edit(Note $id)
     {
-        if ($id->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeNote($id);
 
         return view('notes.edit', ['note' => $id]);
     }
 
     public function update(Request $request, Note $id)
     {
-        if ($id->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeNote($id);
 
         $validated = $request->validate([
             'title' => 'required|max:255',
@@ -67,9 +63,7 @@ class NotesController extends Controller
 
     public function destroy(Note $id)
     {
-        if ($id->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeNote($id);
 
         $id->delete();
 
@@ -78,12 +72,17 @@ class NotesController extends Controller
 
     public function togglePin(Note $id)
     {
-        if ($id->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $this->authorizeNote($id);
 
         $id->update(['is_pinned' => !$id->is_pinned]);
 
         return response()->json(['is_pinned' => $id->is_pinned]);
+    }
+
+    private function authorizeNote(Note $note): void
+    {
+        if ($note->user_id !== auth()->id()) {
+            abort(403);
+        }
     }
 }
