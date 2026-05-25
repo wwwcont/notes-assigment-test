@@ -41,17 +41,49 @@ class NotesController extends Controller
 
     public function edit(Note $id)
     {
+        if ($id->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('notes.edit', ['note' => $id]);
     }
 
     public function update(Request $request, Note $id)
     {
+        if ($id->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+            'color' => 'required|regex:/^#[0-9A-F]{6}$/i',
+        ]);
+
+        $id->update($validated);
+
+        return redirect(route('notes.index'))->with('success', 'Заметка обновлена');
     }
 
     public function destroy(Note $id)
     {
+        if ($id->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $id->delete();
+
+        return redirect(route('notes.index'))->with('success', 'Заметка удалена');
     }
 
     public function togglePin(Note $id)
     {
+        if ($id->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $id->update(['is_pinned' => !$id->is_pinned]);
+
+        return response()->json(['is_pinned' => $id->is_pinned]);
     }
 }
