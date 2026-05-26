@@ -10,15 +10,20 @@ class NotesController extends Controller
     public function index(Request $request)
     {
         $q = $request->get('q');
+        $cols = (int) $request->get('cols', 3);
+
+        if (!in_array($cols, [2, 3, 4], true)) {
+            $cols = 3;
+        }
 
         $notes = auth()->user()->notes()
             ->when($q, fn($query) => $query->where('title', 'like', "%{$q}%"))
             ->orderBy('is_pinned', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate(20)
+            ->paginate(12)
             ->withQueryString();
 
-        return view('notes.index', ['notes' => $notes, 'q' => $q]);
+        return view('notes.index', ['notes' => $notes, 'q' => $q, 'cols' => $cols]);
     }
 
     public function create()
@@ -44,7 +49,7 @@ class NotesController extends Controller
         $this->authorizeNote($note);
 
         return view('notes.edit', ['note' => $note]);
-    }
+@@ -48,41 +53,45 @@ public function edit(Note $note)
 
     public function update(Request $request, Note $note)
     {
@@ -70,13 +75,17 @@ class NotesController extends Controller
         return redirect(route('notes.index'))->with('success', 'Заметка удалена');
     }
 
-    public function togglePin(Note $note)
+    public function togglePin(Request $request, Note $note)
     {
         $this->authorizeNote($note);
 
         $note->update(['is_pinned' => !$note->is_pinned]);
 
-        return response()->json(['is_pinned' => $note->is_pinned]);
+        if ($request->expectsJson()) {
+            return response()->json(['is_pinned' => $note->is_pinned]);
+        }
+
+        return redirect()->route('notes.index')->with('success', $note->is_pinned ? 'Заметка закреплена' : 'Заметка откреплена');
     }
 
     private function authorizeNote(Note $note): void
