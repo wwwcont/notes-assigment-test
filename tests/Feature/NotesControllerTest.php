@@ -57,7 +57,8 @@ class NotesControllerTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('notes.toggle-pin', $note))
-            ->assertRedirect(route('notes.index'));
+            ->assertOk()
+            ->assertJson(['is_pinned' => true]);
 
         $this->assertDatabaseHas('notes', [
             'id' => $note->id,
