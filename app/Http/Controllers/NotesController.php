@@ -39,16 +39,16 @@ class NotesController extends Controller
         return redirect(route('notes.index'))->with('success', 'Заметка создана');
     }
 
-    public function edit(Note $id)
+    public function edit(Note $note)
     {
-        $this->authorizeNote($id);
+        $this->authorizeNote($note);
 
-        return view('notes.edit', ['note' => $id]);
+        return view('notes.edit', ['note' => $note]);
     }
 
-    public function update(Request $request, Note $id)
+    public function update(Request $request, Note $note)
     {
-        $this->authorizeNote($id);
+        $this->authorizeNote($note);
 
         $validated = $request->validate([
             'title' => 'required|max:255',
@@ -56,27 +56,27 @@ class NotesController extends Controller
             'color' => 'required|regex:/^#[0-9A-F]{6}$/i',
         ]);
 
-        $id->update($validated);
+        $note->update($validated);
 
         return redirect(route('notes.index'))->with('success', 'Заметка обновлена');
     }
 
-    public function destroy(Note $id)
+    public function destroy(Note $note)
     {
-        $this->authorizeNote($id);
+        $this->authorizeNote($note);
 
-        $id->delete();
+        $note->delete();
 
         return redirect(route('notes.index'))->with('success', 'Заметка удалена');
     }
 
-    public function togglePin(Note $id)
+    public function togglePin(Note $note)
     {
-        $this->authorizeNote($id);
+        $this->authorizeNote($note);
 
-        $id->update(['is_pinned' => !$id->is_pinned]);
+        $note->update(['is_pinned' => !$note->is_pinned]);
 
-        return response()->json(['is_pinned' => $id->is_pinned]);
+        return response()->json(['is_pinned' => $note->is_pinned]);
     }
 
     private function authorizeNote(Note $note): void
