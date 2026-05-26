@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers;
@@ -24,25 +23,66 @@ class NotesController extends Controller
 
     public function create()
     {
+        return view('notes.create');
     }
 
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+            'color' => 'required|regex:/^#[0-9A-F]{6}$/i',
+        ]);
+
+        auth()->user()->notes()->create($validated);
+
+        return redirect(route('notes.index'))->with('success', 'Заметка создана');
     }
 
     public function edit(Note $id)
     {
+        $this->authorizeNote($id);
+
+        return view('notes.edit', ['note' => $id]);
     }
 
     public function update(Request $request, Note $id)
     {
+        $this->authorizeNote($id);
+
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'nullable',
+            'color' => 'required|regex:/^#[0-9A-F]{6}$/i',
+        ]);
+
+        $id->update($validated);
+
+        return redirect(route('notes.index'))->with('success', 'Заметка обновлена');
     }
 
     public function destroy(Note $id)
     {
+        $this->authorizeNote($id);
+
+        $id->delete();
+
+        return redirect(route('notes.index'))->with('success', 'Заметка удалена');
     }
 
     public function togglePin(Note $id)
     {
+        $this->authorizeNote($id);
+
+        $id->update(['is_pinned' => !$id->is_pinned]);
+
+        return response()->json(['is_pinned' => $id->is_pinned]);
+    }
+
+    private function authorizeNote(Note $note): void
+    {
+        if ($note->user_id !== auth()->id()) {
+            abort(403);
+        }
     }
 }
