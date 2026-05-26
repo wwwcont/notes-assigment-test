@@ -1,8 +1,8 @@
 ### Запуск
 
 ```
-php artison migrate
-php artison serve
+php artisan migrate
+php artisan serve
 npm run dev
 ```
 
