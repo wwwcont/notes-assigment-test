@@ -1,47 +1,43 @@
 @extends('layouts.notes')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Новая заметка</h1>
+<div class="mx-auto max-w-3xl py-4 sm:py-8">
+    <div class="ui-surface p-6 sm:p-8">
+        <h1 class="mb-1 text-2xl font-semibold tracking-tight text-slate-900">Новая заметка</h1>
+        <p class="mb-6 text-sm text-slate-500">Добавьте заголовок, текст и выберите цвет карточки.</p>
 
-    <form method="POST" action="{{ route('notes.store') }}" class="max-w-2xl">
-        @csrf
-
-        <div class="mb-6">
-            <label class="block text-sm font-bold mb-2">Название</label>
-            <input type="text" name="title" value="{{ old('title') }}" class="w-full px-4 py-2 border rounded @error('title') border-red-500 @enderror">
-            @error('title')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-sm font-bold mb-2">Содержимое</label>
-            <textarea name="content" rows="8" class="w-full px-4 py-2 border rounded @error('content') border-red-500 @enderror">{{ old('content') }}</textarea>
-            @error('content')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-sm font-bold mb-3">Цвет</label>
-            <div class="flex gap-3">
-                @foreach(['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6'] as $colorOption)
-                <label class="flex items-center cursor-pointer">
-                    <input type="radio" name="color" value="{{ $colorOption }}" @checked(old('color', '#6366f1') === $colorOption) class="hidden">
-                    <div class="w-8 h-8 rounded-full" style="background-color: {{ $colorOption }};@checked(old('color', '#6366f1') === $colorOption) ring: 2px; ring-color: #000;@endchecked"></div>
-                </label>
-                @endforeach
+        <form method="POST" action="{{ route('notes.store') }}" class="space-y-5">
+            @csrf
+            <div>
+                <label class="mb-2 block text-sm font-medium text-slate-700">Название</label>
+                <input type="text" name="title" value="{{ old('title') }}" class="ui-input @error('title') border-rose-400 focus:border-rose-500 focus:ring-rose-100 @enderror">
+                @error('title')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>
-            @error('color')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
 
-        <div class="flex gap-2">
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Сохранить</button>
-            <a href="{{ route('notes.index') }}" class="px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Отмена</a>
-        </div>
-    </form>
+            <div>
+                <label class="mb-2 block text-sm font-medium text-slate-700">Содержимое</label>
+                <textarea name="content" rows="8" class="ui-input @error('content') border-rose-400 focus:border-rose-500 focus:ring-rose-100 @enderror">{{ old('content') }}</textarea>
+                @error('content')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label class="mb-3 block text-sm font-medium text-slate-700">Цвет</label>
+                <div class="flex flex-wrap gap-3">
+                    @foreach(['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6'] as $colorOption)
+                    <label class="cursor-pointer">
+                        <input type="radio" name="color" value="{{ $colorOption }}" class="peer sr-only" {{ old('color', '#6366f1') === $colorOption ? 'checked' : '' }}>
+                        <span class="block h-10 w-10 rounded-full ring-2 ring-transparent shadow-sm transition duration-200 hover:scale-105 peer-checked:scale-110 peer-checked:ring-slate-900" style="background-color: {{ $colorOption }}"></span>
+                    </label>
+                    @endforeach
+                </div>
+                @error('color')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-2">
+                <button type="submit" class="ui-btn-primary">Сохранить</button>
+                <a href="{{ route('notes.index') }}" class="ui-btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
