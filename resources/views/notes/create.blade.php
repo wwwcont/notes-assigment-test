@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">Новая заметка</h1>
 
-    <form method="POST" action="{{ route('notes.store') }}" class="max-w-2xl">
+    <form method="POST" action="{{ route('notes.store') }}" class="max-w-2xl" x-data="{ selectedColor: '{{ old('color', '#6366f1') }}' }">
         @csrf
 
         <div class="mb-6">
@@ -25,14 +25,19 @@
 
         <div class="mb-6">
             <label class="block text-sm font-bold mb-3">Цвет</label>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3">
                 @foreach(['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6'] as $colorOption)
-                <label class="flex items-center cursor-pointer">
-                    <input type="radio" name="color" value="{{ $colorOption }}" @checked(old('color', '#6366f1') === $colorOption) class="hidden">
-                    <div class="w-8 h-8 rounded-full" style="background-color: {{ $colorOption }};@checked(old('color', '#6366f1') === $colorOption) ring: 2px; ring-color: #000;@endchecked"></div>
-                </label>
+                <button
+                    type="button"
+                    @click="selectedColor = '{{ $colorOption }}'"
+                    class="w-8 h-8 rounded-full border-2 transition"
+                    :class="selectedColor === '{{ $colorOption }}' ? 'border-gray-900 scale-110' : 'border-transparent'"
+                    style="background-color: {{ $colorOption }}"
+                    aria-label="Выбрать цвет {{ $colorOption }}"
+                ></button>
                 @endforeach
             </div>
+            <input type="hidden" name="color" :value="selectedColor">
             @error('color')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
