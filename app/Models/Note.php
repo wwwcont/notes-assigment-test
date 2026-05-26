@@ -10,6 +10,7 @@ class Note extends Model
     protected $fillable = ['title', 'content', 'color', 'is_pinned'];
 
     protected $casts = [
+        'user_id' => 'integer',
         'is_pinned' => 'boolean',
     ];
 

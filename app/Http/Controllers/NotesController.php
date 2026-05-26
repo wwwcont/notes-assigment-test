@@ -81,7 +81,7 @@ class NotesController extends Controller
 
     private function authorizeNote(Note $note): void
     {
-        if ($note->user_id !== auth()->id()) {
+        if ((int) $note->user_id !== (int) auth()->id()) {
             abort(403);
         }
     }

@@ -4,36 +4,40 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">Редактировать заметку</h1>
 
-    <form method="POST" action="{{ route('notes.update', $note) }}" class="max-w-2xl">
+    <form method="POST" action="{{ route('notes.update', $note) }}" class="max-w-2xl" x-data="{ selectedColor: '{{ old('color', $note->color) }}' }">
         @csrf
-        @method('POST')
 
         <div class="mb-6">
-            <label class="block text-sm font-bold mb-2">Название</label>
-            <input type="text" name="title" value="{{ old('title', $note->title) }}" class="w-full px-4 py-2 border rounded @error('title') border-red-500 @enderror">
+            <label for="title" class="block text-sm font-bold mb-2">Заголовок</label>
+            <input id="title" type="text" name="title" value="{{ old('title', $note->title) }}" class="w-full px-4 py-2 border rounded @error('title') border-red-500 @enderror" maxlength="255" required>
             @error('title')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="mb-6">
-            <label class="block text-sm font-bold mb-2">Содержимое</label>
-            <textarea name="content" rows="8" class="w-full px-4 py-2 border rounded @error('content') border-red-500 @enderror">{{ old('content', $note->content) }}</textarea>
+            <label for="content" class="block text-sm font-bold mb-2">Содержимое</label>
+            <textarea id="content" name="content" rows="8" class="w-full px-4 py-2 border rounded @error('content') border-red-500 @enderror">{{ old('content', $note->content) }}</textarea>
             @error('content')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="mb-6">
-            <label class="block text-sm font-bold mb-3">Цвет</label>
-            <div class="flex gap-3">
+            <span class="block text-sm font-bold mb-3">Цвет</span>
+            <div class="flex flex-wrap gap-3">
                 @foreach(['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6'] as $colorOption)
-                <label class="flex items-center cursor-pointer">
-                    <input type="radio" name="color" value="{{ $colorOption }}" @checked(old('color', $note->color) === $colorOption) class="hidden">
-                    <div class="w-8 h-8 rounded-full" style="background-color: {{ $colorOption }};@checked(old('color', $note->color) === $colorOption) ring: 2px; ring-color: #000;@endchecked"></div>
-                </label>
+                <button
+                    type="button"
+                    @click="selectedColor = '{{ $colorOption }}'"
+                    class="w-8 h-8 rounded-full border-2 transition"
+                    :class="selectedColor === '{{ $colorOption }}' ? 'border-gray-900 scale-110' : 'border-transparent'"
+                    style="background-color: {{ $colorOption }}"
+                    aria-label="Выбрать цвет {{ $colorOption }}"
+                ></button>
                 @endforeach
             </div>
+            <input type="hidden" name="color" :value="selectedColor">
             @error('color')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
