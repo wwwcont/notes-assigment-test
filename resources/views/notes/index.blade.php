@@ -1,7 +1,7 @@
 @extends('layouts.notes')
 
 @section('content')
-<div class="mx-auto py-6">
+<div class="mx-auto max-w-6xl py-6">
     <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -34,15 +34,12 @@
         </div>
     </form>
 
-    @php
-        $gridClass = match($cols) {
-            2 => 'grid-cols-1 md:grid-cols-2',
-            4 => 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4',
-            default => 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3',
-        };
-    @endphp
-
-    <div class="mb-8 grid {{ $gridClass }} gap-4">
+    <div @class([
+        'mb-8 grid gap-4',
+        'grid-cols-1 sm:grid-cols-2' => $cols === 2,
+        'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' => $cols === 3,
+        'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' => $cols === 4,
+    ])>
         @forelse($notes as $note)
         <article style="border-top: 3px solid {{ $note->color }}" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
             <div class="mb-3 flex items-start justify-between gap-3">
@@ -51,16 +48,14 @@
                     @csrf
                     <button
                         type="submit"
-                        class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition {{ $note->is_pinned ? 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100' }}"
+                        class="inline-flex h-8 w-8 shrink-0 items-center justify-center text-lg leading-none transition hover:scale-110 {{ $note->is_pinned ? 'text-amber-500' : 'text-gray-400 hover:text-gray-600' }}"
                         aria-label="{{ $note->is_pinned ? 'Открепить заметку' : 'Закрепить заметку' }}"
                         title="{{ $note->is_pinned ? 'Открепить' : 'Закрепить' }}"
                     >
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M14.7 2.3a1 1 0 0 1 1.4 1.4l-1.5 1.5 1.6 4.8a1 1 0 0 1-.24 1.02l-2.12 2.12 1.06 3.18a1 1 0 0 1-1.66 1.02L9.9 14l-3.07 3.07a1 1 0 0 1-1.42-1.42L8.48 12.6 5 9.12a1 1 0 0 1 1.02-1.66l3.18 1.06 2.12-2.12a1 1 0 0 1 1.02-.24l4.8 1.6 1.56-1.46z"/>
-                        </svg>
+                        <span aria-hidden="true">📌</span>
                     </button>
                 </form>
-           </div>
+            </div>
 
             @if($note->is_pinned)
             <div class="mb-3">

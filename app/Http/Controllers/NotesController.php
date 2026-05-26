@@ -49,8 +49,8 @@ class NotesController extends Controller
         $this->authorizeNote($note);
 
         return view('notes.edit', ['note' => $note]);
-@@ -48,41 +53,45 @@ public function edit(Note $note)
-
+    }
+    
     public function update(Request $request, Note $note)
     {
         $this->authorizeNote($note);
