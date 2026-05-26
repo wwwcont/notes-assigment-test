@@ -8,15 +8,15 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased text-gray-900">
-        <div class="min-h-screen bg-gray-50">
+    <body class="font-sans text-slate-900">
+        <div class="min-h-screen bg-gradient-to-b from-slate-100 to-slate-50">
             @include('layouts.navigation')
 
-            <main class="py-8">
+            <main class="py-8 sm:py-10">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     @yield('content')
                 </div>
